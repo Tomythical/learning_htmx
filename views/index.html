@@ -1,21 +1,47 @@
 {{ block "index" . }}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title></title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
-  </head>
-  <body>
-    <div id="count">
-      {{ template "count" . }}
-    </div>
-    <button hx-target="#count" hx-post="/count">Count</button>
-  </body>
+
+<head>
+  <title></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
+</head>
+
+<body>
+  {{ template "form" .Form }}
+  <hr>
+  {{ template "display" .Data }}
+</body>
+
 </html>
 {{ end }}
 
-{{ block "count" . }}
-Count {{ .Count }}
+{{ block "form" . }}
+<form hx-swap="outerHTML" hx-target="#contacts" hx-post="/contacts">
+  name:
+  <input {{ if .Values.name }} value="{{ .Values.name }}" {{ end }} type="text" name="name">
+  email:
+  <input {{ if .Values.email }} value="{{ .Values.email }}" {{ end }} type="text" name="email">
+  <button type="submit">Create Contact</button>
+
+  {{ if .Errors.email }}
+  <div style="color: red">{{ .Errors.email }}</div>
+  {{ end }}
+
+</form>
+{{ end }}
+
+{{ block "display" . }}
+<div id="contacts" style="display: flex; flex-direction: column">
+  {{ range .Contacts}}
+  <div>
+    Name:
+    <span>{{ .Name }}</span>
+    Email:
+    <span>{{ .Email }}</span>
+  </div>
+  {{ end }}
+</div>
 {{ end }}
